@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTD Wiki</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;800&display=swap');
+
+        :root {
+            --bg: #020202;
+            --accent: #ffffff;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: crosshair; /* Минималистичный курсор */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- ФИНА (НОВЫЙ PARALLAX) --- */
+        .bg-wrapper {
+            position: fixed;
+            inset: -50px; /* Немного больше экрана для сдвига */
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, rgba(15, 15, 25, 1) 0%, rgba(2, 2, 2, 1) 100%);
+            transition: transform 0.2s ease-out; /* Плавный сдвиг */
+        }
+
+        .bg-image {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop') center/cover;
+            opacity: 0.12;
+            filter: blur(80px);
+            animation: moveBg 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes moveBg {
+            from { transform: scale(1) rotate(0deg); }
+            to { transform: scale(1.1) rotate(1deg); }
+        }
+
+        /* СКАНЛАЙНЫ (АККУРАТНЫЕ) */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3) 51%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.06;
+        }
+
+        /* ШОК-ВЕЙВ КЛИК (БЫСТРЫЙ) */
+        .click-effect {
+            position: fixed;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            animation: shockwave 0.4s ease-out forwards;
+        }
+
+        @keyframes shockwave {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 100px; height: 100px; opacity: 0; border-width: 0.2px; }
+        }
+
+        /* --- НАВИГАЦИЯ --- */
+        nav {
+            position: fixed;
+            width: 100%;
+            padding: 40px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* ГЛИТЧ-ЭФФЕКТ ДЛЯ ЛОГО (НОВЫЙ) */
+        .logo {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 18px;
+            opacity: 0.8;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .logo:hover {
+            opacity: 1;
+            text-shadow: 2px 0 red, -2px 0 blue;
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* --- ГЛАВНЫЙ БЛОК --- */
+        main {
+            padding: 180px 60px 100px;
+            max-width: 1500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .hero-layout {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 110px;
+        }
+
+        /* ВОЗВРАЩЕННЫЙ НАКЛОН И ТЕКСТ */
+        .title-wrap h1 {
+            font-size: clamp(60px, 8vw, 110px);
+            line-height: 0.9;
+            font-weight: 800;
+            letter-spacing: -4px;
+            transform: skewY(-2deg);
+            text-transform: uppercase;
+        }
+
+        /* ГЛАВНАЯ КАРТОЧКА ИГРЫ */
+        .game-card-main {
+            width: 420px;
+            height: 230px;
+            background: #080808;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .game-card-main:hover {
+            transform: scale(1.02) rotate(-1deg) translateY(-5px);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        }
+
+        .game-card-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.8s ease;
+        }
+
+        /* --- СЕТКА КАРТОЧЕК --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* КАРТОЧКА (С 3D ТИЛТОМ) */
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(12px);
+            transform-style: preserve-3d; /* Важно для тилта */
+            will-change: transform;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: #fff;
+            box-shadow: 0 20px 50px rgba(255,255,255,0.05);
+        }
+
+        .card h2 {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            transform: translateZ(30px); /* Выносим заголовок вперед */
+        }
+
+        /* СВЕТЯЩИЙСЯ ТЕКСТ ОПИСАНИЯ */
+        .card p {
+            font-size: 13px;
+            color: #777;
+            line-height: 1.6;
+            font-weight: 400;
+            transition: 0.4s;
+            transform: translateZ(15px);
+        }
+
+        .card:hover p {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* --- ИНДИКАТОР СКРОЛЛА (НОВЫЙ) --- */
+        .scroll-down {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.5;
+            animation: pulseScroll 2s infinite;
+            z-index: 100;
+        }
+
+        .scroll-down span {
+            width: 1px;
+            height: 40px;
+            background: #fff;
+        }
+
+        @keyframes pulseScroll {
+            0% { opacity: 0.2; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 0.6; transform: translateX(-50%) translateY(5px); }
+            100% { opacity: 0.2; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* --- АНИМАЦИЯ ПОЯВЛЕНИЯ --- */
+        [data-scroll] {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        [data-scroll].visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-wrapper" id="bg-parallax">
+        <div class="bg-image"></div>
+    </div>
+    <div class="scanlines"></div>
+
+    <nav>
+        <div class="logo">MTD Wiki</div>
+    </nav>
+
+    <main>
+        <div class="hero-layout">
+            <div class="title-wrap" data-scroll>
+                <h1>Multiverse</h1>
+                <h1 style="color: transparent; -webkit-text-stroke: 1px #fff;">Tower Defense</h1>
+            </div>
+            <div class="game-card-main" data-scroll>
+                <img src="" alt="Game" id="game-thumb" style="display:none;">
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card" data-scroll data-tilt>
+                <h2>Towers</h2>
+                <p>Stats, upgrades, and strategies for every unit in the game.</p>
+            </div>
+            <div class="card" data-scroll data-tilt>
+                <h2>Gamemodes</h2>
+                <p>Information on difficulties, waves, and special event modes.</p>
+            </div>
+            <div class="card" data-scroll data-tilt>
+                <h2>Features</h2>
+                <p>Mechanics, trading, evolution systems, and more.</p>
+            </div>
+            <div class="card" data-scroll data-tilt>
+                <h2>Codes</h2>
+                <p>Active promo codes for free gems, coins, and exclusive rewards.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="scroll-down">
+        <span></span>
+    </div>
+
+    <script>
+        // 1. ШОК-ВЕЙВ КЛИК
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'click-effect';
+            ripple.style.left = `${e.clientX}px`;
+            ripple.style.top = `${e.clientY}px`;
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 400);
+        });
+
+        // 2. ПЛАВНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
+
+        // 3. API ROBLOX КАРТИНКА (БЕЗ ИЗМЕНЕНИЙ)
+        async function fetchRobloxThumb() {
+            const placeId = "115761178144500";
+            const proxy = "https://api.allorigins.win/get?url=";
+            
+            try {
+                const universeRes = await fetch(`${proxy}${encodeURIComponent(`https://apis.roblox.com/universes/v1/places/${placeId}/universe`)}`);
+                const universeData = await universeRes.json();
+                const universeId = JSON.parse(universeData.contents).universeId;
+
+                const thumbRes = await fetch(`${proxy}${encodeURIComponent(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&returnPolicy=PlaceHolder&size=512x512&format=Png&isCircular=false`)}`);
+                const thumbData = await thumbRes.json();
+                const imageUrl = JSON.parse(thumbData.contents).data[0].imageUrl;
+                
+                const imgTag = document.getElementById('game-thumb');
+                imgTag.src = imageUrl;
+                imgTag.style.display = 'block';
+            } catch (e) {
+                console.log("Image load failed");
+            }
+        }
+        fetchRobloxThumb();
+
+        // 4. PARALLAX ФОНА (СЕКРЕТ)
+        const bgParallax = document.getElementById('bg-parallax');
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20; // Сдвиг на 20px
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            bgParallax.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+        // 5. 3D ТИЛТ КАРТОЧЕК (СЕКРЕТ)
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x position within the element.
+                const y = e.clientY - rect.top;  // y position within the element.
+                
+                const xRot = ((y / rect.height) - 0.5) * -15; // Max rotation 15deg
+                const yRot = ((x / rect.width) - 0.5) * 15;
+                
+                card.style.transform = `perspective(1000px) scale(1.02) rotateX(${xRot}deg) rotateY(${yRot}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) scale(1) rotateX(0deg) rotateY(0deg)`;
+            });
+        });
+
+    </script>
+</body>
+</html>
