@@ -18,7 +18,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: crosshair; /* Минималистичный курсор */
+            cursor: crosshair;
         }
 
         body {
@@ -29,13 +29,12 @@
             min-height: 100vh;
         }
 
-        /* --- ФИНА (НОВЫЙ PARALLAX) --- */
         .bg-wrapper {
             position: fixed;
-            inset: -50px; /* Немного больше экрана для сдвига */
+            inset: -50px;
             z-index: -1;
             background: radial-gradient(circle at 50% 50%, rgba(15, 15, 25, 1) 0%, rgba(2, 2, 2, 1) 100%);
-            transition: transform 0.2s ease-out; /* Плавный сдвиг */
+            transition: transform 0.2s ease-out;
         }
 
         .bg-image {
@@ -52,7 +51,6 @@
             to { transform: scale(1.1) rotate(1deg); }
         }
 
-        /* СКАНЛАЙНЫ (АККУРАТНЫЕ) */
         .scanlines {
             position: fixed;
             inset: 0;
@@ -63,7 +61,6 @@
             opacity: 0.06;
         }
 
-        /* ШОК-ВЕЙВ КЛИК (БЫСТРЫЙ) */
         .click-effect {
             position: fixed;
             border: 1px solid rgba(255, 255, 255, 0.5);
@@ -79,7 +76,6 @@
             100% { width: 100px; height: 100px; opacity: 0; border-width: 0.2px; }
         }
 
-        /* --- НАВИГАЦИЯ --- */
         nav {
             position: fixed;
             width: 100%;
@@ -90,7 +86,6 @@
             z-index: 1000;
         }
 
-        /* ГЛИТЧ-ЭФФЕКТ ДЛЯ ЛОГО (НОВЫЙ) */
         .logo {
             font-weight: 800;
             letter-spacing: 1px;
@@ -115,7 +110,6 @@
             100% { transform: translate(0); }
         }
 
-        /* --- ГЛАВНЫЙ БЛОК --- */
         main {
             padding: 180px 60px 100px;
             max-width: 1500px;
@@ -130,7 +124,6 @@
             margin-bottom: 110px;
         }
 
-        /* ВОЗВРАЩЕННЫЙ НАКЛОН И ТЕКСТ */
         .title-wrap h1 {
             font-size: clamp(60px, 8vw, 110px);
             line-height: 0.9;
@@ -140,7 +133,6 @@
             text-transform: uppercase;
         }
 
-        /* ГЛАВНАЯ КАРТОЧКА ИГРЫ */
         .game-card-main {
             width: 420px;
             height: 230px;
@@ -165,14 +157,12 @@
             transition: 0.8s ease;
         }
 
-        /* --- СЕТКА КАРТОЧЕК --- */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
         }
 
-        /* КАРТОЧКА (С 3D ТИЛТОМ) */
         .card {
             background: var(--glass);
             border: 1px solid var(--border);
@@ -184,7 +174,7 @@
             justify-content: flex-end;
             transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
             backdrop-filter: blur(12px);
-            transform-style: preserve-3d; /* Важно для тилта */
+            transform-style: preserve-3d;
             will-change: transform;
         }
 
@@ -198,10 +188,9 @@
             font-size: 26px;
             font-weight: 800;
             margin-bottom: 12px;
-            transform: translateZ(30px); /* Выносим заголовок вперед */
+            transform: translateZ(30px);
         }
 
-        /* СВЕТЯЩИЙСЯ ТЕКСТ ОПИСАНИЯ */
         .card p {
             font-size: 13px;
             color: #777;
@@ -216,7 +205,6 @@
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
-        /* --- ИНДИКАТОР СКРОЛЛА (НОВЫЙ) --- */
         .scroll-down {
             position: fixed;
             bottom: 30px;
@@ -242,7 +230,6 @@
             100% { opacity: 0.2; transform: translateX(-50%) translateY(0); }
         }
 
-        /* --- АНИМАЦИЯ ПОЯВЛЕНИЯ --- */
         [data-scroll] {
             opacity: 0;
             transform: translateY(30px);
@@ -302,7 +289,6 @@
     </div>
 
     <script>
-        // 1. ШОК-ВЕЙВ КЛИК
         document.addEventListener('click', (e) => {
             const ripple = document.createElement('div');
             ripple.className = 'click-effect';
@@ -312,7 +298,6 @@
             setTimeout(() => ripple.remove(), 400);
         });
 
-        // 2. ПЛАВНОЕ ПОЯВЛЕНИЕ ПРИ СКРОЛЛЕ
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -321,7 +306,6 @@
 
         document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
 
-        // 3. API ROBLOX КАРТИНКА (БЕЗ ИЗМЕНЕНИЙ)
         async function fetchRobloxThumb() {
             const placeId = "115761178144500";
             const proxy = "https://api.allorigins.win/get?url=";
@@ -344,23 +328,21 @@
         }
         fetchRobloxThumb();
 
-        // 4. PARALLAX ФОНА (СЕКРЕТ)
         const bgParallax = document.getElementById('bg-parallax');
         document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 20; // Сдвиг на 20px
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
             const y = (e.clientY / window.innerHeight - 0.5) * 20;
             bgParallax.style.transform = `translate(${x}px, ${y}px)`;
         });
 
-        // 5. 3D ТИЛТ КАРТОЧЕК (СЕКРЕТ)
         const cards = document.querySelectorAll('.card');
         cards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; // x position within the element.
-                const y = e.clientY - rect.top;  // y position within the element.
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 
-                const xRot = ((y / rect.height) - 0.5) * -15; // Max rotation 15deg
+                const xRot = ((y / rect.height) - 0.5) * -15;
                 const yRot = ((x / rect.width) - 0.5) * 15;
                 
                 card.style.transform = `perspective(1000px) scale(1.02) rotateX(${xRot}deg) rotateY(${yRot}deg)`;
