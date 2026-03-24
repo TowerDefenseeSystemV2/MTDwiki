@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTD Wiki</title>
+    <title>MTD Wiki | Database</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
             --bg: #020202;
             --accent: #ffffff;
-            --glass: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --active: #00ff88;
+            --expired: #ff4444;
+            --special: #00d9ff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
@@ -22,14 +25,14 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
-            perspective: 1200px;
+            perspective: 2000px;
         }
 
         .bg-wrapper {
             position: fixed;
-            inset: -50px;
+            inset: -100px;
             z-index: -1;
-            background: radial-gradient(circle at 50% 50%, rgba(15, 15, 25, 1) 0%, rgba(2, 2, 2, 1) 100%);
+            background: radial-gradient(circle at 50% 50%, rgba(20, 20, 35, 1) 0%, rgba(2, 2, 2, 1) 100%);
             will-change: transform;
         }
 
@@ -37,8 +40,8 @@
             position: absolute;
             inset: 0;
             background: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop') center/cover;
-            opacity: 0.12;
-            filter: blur(80px);
+            opacity: 0.15;
+            filter: blur(100px);
         }
 
         .scanlines {
@@ -53,110 +56,124 @@
 
         .click-effect {
             position: fixed;
-            border: 1.5px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 50%;
             pointer-events: none;
             transform: translate(-50%, -50%);
             z-index: 9999;
-            animation: shockwave 0.5s cubic-bezier(0.2, 0, 0.2, 1) forwards;
+            animation: shockwave 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
         }
 
         @keyframes shockwave {
-            0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 120px; height: 120px; opacity: 0; border-width: 0.5px; }
+            0% { width: 0; height: 0; opacity: 1; border-width: 2px; }
+            100% { width: 150px; height: 150px; opacity: 0; border-width: 0px; }
         }
 
-        nav { position: fixed; width: 100%; padding: 40px 60px; z-index: 1000; }
-        .logo { font-weight: 800; font-size: 18px; transition: 0.2s; display: inline-block; }
-        .logo:hover { animation: glitch 0.2s infinite; text-shadow: 2px 0 #ff00ea, -2px 0 #00fff2; }
+        nav { position: fixed; width: 100%; padding: 40px 60px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 800; font-size: 20px; letter-spacing: 1px; }
+        .logo span { color: transparent; -webkit-text-stroke: 0.5px #fff; }
 
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            25% { transform: translate(-2px, 1px); }
-            50% { transform: translate(2px, -1px); }
-            100% { transform: translate(0); }
-        }
-
-        main { padding: 180px 60px 100px; max-width: 1500px; margin: 0 auto; }
+        main { padding: 160px 60px 100px; max-width: 1600px; margin: 0 auto; }
 
         .hero-layout {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            margin-bottom: 110px;
+            margin-bottom: 100px;
         }
 
         .title-wrap h1 {
-            font-size: clamp(50px, 8vw, 110px);
-            line-height: 0.9;
+            font-size: clamp(40px, 8vw, 110px);
+            line-height: 0.85;
             font-weight: 800;
-            letter-spacing: -4px;
+            letter-spacing: -5px;
             transform: skewY(-2deg);
             text-transform: uppercase;
         }
 
         .game-card-main {
-            width: 420px;
-            height: 230px;
-            background: #080808;
-            border-radius: 16px;
+            width: 450px;
+            height: 250px;
+            background: #000;
+            border-radius: 20px;
             overflow: hidden;
             border: 1px solid var(--border);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            transition: 0.5s ease;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .game-card-main:hover { transform: scale(1.03) rotate(-1deg); border-color: #fff; }
+        .game-card-main:hover { transform: scale(1.02) rotate(-1deg); border-color: rgba(255,255,255,0.4); }
 
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 
-        .card-container { perspective: 1000px; height: 280px; }
+        .card-container { perspective: 1500px; height: 320px; }
 
         .card {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 40px;
+            width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
-            backdrop-filter: blur(12px);
-            transform-style: preserve-3d;
             position: relative;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
         }
 
-        .card:hover { border-color: #fff; background: rgba(255, 255, 255, 0.05); }
-
-        .card.is-flipped { transform: rotateY(180deg); }
+        .card.is-flipped { transform: rotateY(180deg) scale(1.05); }
 
         .card-front, .card-back {
             position: absolute;
             inset: 0;
-            padding: 40px;
             backface-visibility: hidden;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
         }
+
+        .card-front:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
 
         .card-back {
             transform: rotateY(180deg);
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            justify-content: flex-start;
+            padding: 25px;
+            background: rgba(10, 10, 15, 0.95);
+            overflow-y: auto;
         }
 
-        .card h2 { font-size: 26px; font-weight: 800; margin-bottom: 12px; transform: translateZ(30px); }
-        .card p { font-size: 13px; color: #888; transform: translateZ(15px); }
+        .codes-list { width: 100%; font-family: 'JetBrains Mono', monospace; }
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 11px;
+        }
+        .code-name { font-weight: 700; color: #fff; }
+        .code-reward { color: #888; display: flex; align-items: center; gap: 5px; }
+        .reward-icon { width: 14px; height: 14px; object-fit: contain; }
+        
+        .badge {
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+        .badge.active { background: rgba(0, 255, 136, 0.1); color: var(--active); }
+        .badge.expired { background: rgba(255, 68, 68, 0.1); color: var(--expired); }
+        .badge.yt { background: rgba(0, 217, 255, 0.1); color: var(--special); }
 
-        [data-scroll] { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        .card h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; transform: translateZ(50px); }
+        .card p { font-size: 14px; color: #777; transform: translateZ(30px); }
+
+        [data-scroll] { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.2, 1, 0.2, 1); }
         [data-scroll].visible { opacity: 1; transform: translateY(0); }
 
-        @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } .hero-layout { flex-direction: column; align-items: flex-start; gap: 40px; } }
+        .card-back::-webkit-scrollbar { width: 4px; }
+        .card-back::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -164,50 +181,116 @@
     <div class="bg-wrapper" id="scene"><div class="bg-image"></div></div>
     <div class="scanlines"></div>
 
-    <nav><div class="logo">MTD Wiki</div></nav>
+    <nav>
+        <div class="logo">MTD <span>Wiki</span></div>
+    </nav>
 
     <main>
         <div class="hero-layout">
             <div class="title-wrap" data-scroll>
                 <h1>Multiverse</h1>
-                <h1 style="color: transparent; -webkit-text-stroke: 1px #fff;">Tower Defense</h1>
+                <h1 style="color: transparent; -webkit-text-stroke: 1.5px #fff;">Tower Defense</h1>
             </div>
             <div class="game-card-main" data-scroll>
-                <img src="https://tr.rbxcdn.com/180DAY-1025a1f6496929944061d47910940381/768/432/Image/Webp" 
-                     alt="Game View" style="width:100%; height:100%; object-fit:cover;">
+                <img src="https://tr.rbxcdn.com/180DAY-1025a1f6496929944061d47910940381/768/432/Image/Webp" alt="MTD" style="width:100%; height:100%; object-fit:cover;">
             </div>
         </div>
 
         <div class="grid">
             <div class="card-container" data-scroll>
-                <div class="card" data-3d>
-                    <h2>Towers</h2>
-                    <p>Stats, upgrades, and strategies for every unit in the game.</p>
-                </div>
+                <a href="towers.html" style="text-decoration: none; color: inherit;">
+                    <div class="card" data-3d>
+                        <div class="card-front">
+                            <h2>Towers</h2>
+                            <p>Full unit database, damage tables, and evolution paths.</p>
+                        </div>
+                    </div>
+                </a>
             </div>
+
             <div class="card-container" data-scroll>
                 <div class="card" data-3d>
-                    <h2>Gamemodes</h2>
-                    <p>Information on difficulties, waves, and special event modes.</p>
+                    <div class="card-front">
+                        <h2>Modes</h2>
+                        <p>Strategies for Nightmare, Infinite, and Event dimensions.</p>
+                    </div>
                 </div>
             </div>
+
             <div class="card-container" data-scroll>
                 <div class="card" data-3d>
-                    <h2>Features</h2>
-                    <p>Mechanics, trading, evolution systems, and more.</p>
+                    <div class="card-front">
+                        <h2>Features</h2>
+                        <p>Trading rules, guild systems, and core mechanics.</p>
+                    </div>
                 </div>
             </div>
+
             <div class="card-container" data-scroll>
                 <div class="card" id="codes-card">
                     <div class="card-front">
                         <h2>Codes</h2>
-                        <p>Click to reveal active promo codes.</p>
+                        <p>Click to access the central reward database.</p>
                     </div>
                     <div class="card-back">
-                        <h2 style="font-size: 20px; color: #00ff88;">ACTIVE CODES</h2>
-                        <p style="color: #fff; font-family: monospace; font-size: 16px;">
-                            RELEASE<br>WIKI2026<br>500K_VISITS
-                        </p>
+                        <div class="codes-list">
+                            <h3 style="font-size: 12px; margin-bottom: 15px; color: #555;">// DATABASE_REWARDS</h3>
+                            
+                            <div class="code-item">
+                                <span class="code-name">ULTRAKILL</span>
+                                <span class="code-reward">50 <img src="images/cash.png" class="reward-icon"></span>
+                                <span class="badge active">Active</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">4K_LIKES_EVO</span>
+                                <span class="code-reward">1 Evo Crate</span>
+                                <span class="badge active">Active</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">CC_CODE_5</span>
+                                <span class="code-reward">V1, V2, Minos</span>
+                                <span class="badge yt">YouTuber</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">10K_DISCORD</span>
+                                <span class="code-reward">10k <img src="images/cash.png" class="reward-icon"></span>
+                                <span class="badge active">Group</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">FIRST_GROUP</span>
+                                <span class="code-reward">4500 <img src="images/cash.png" class="reward-icon"></span>
+                                <span class="badge active">Group</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">RELEASE</span>
+                                <span class="code-reward">Shiny Kuzya</span>
+                                <span class="badge active">Active</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">OMTD</span>
+                                <span class="code-reward">100 <img src="images/cash.png" class="reward-icon"></span>
+                                <span class="badge active">Active</span>
+                            </div>
+
+                            <div class="code-item">
+                                <span class="code-name">GARRDER</span>
+                                <span class="code-reward">Traffic Cone</span>
+                                <span class="badge active">Active</span>
+                            </div>
+
+                            <div class="code-item" style="opacity: 0.5;">
+                                <span class="code-name">KI_KI_MA_MA</span>
+                                <span class="code-reward">Jason Unit</span>
+                                <span class="badge expired">Expired</span>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -215,11 +298,10 @@
     </main>
 
     <script>
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', e => {
             const ripple = document.createElement('div');
             ripple.className = 'click-effect';
-            ripple.style.left = `${e.clientX}px`;
-            ripple.style.top = `${e.clientY}px`;
+            ripple.style.left = `${e.clientX}px`; ripple.style.top = `${e.clientY}px`;
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 500);
         });
@@ -239,8 +321,8 @@
 
         const scene = document.getElementById('scene');
         document.addEventListener('mousemove', e => {
-            const x = (e.clientX - window.innerWidth/2) / 60;
-            const y = (e.clientY - window.innerHeight/2) / 60;
+            const x = (e.clientX - window.innerWidth/2) / 70;
+            const y = (e.clientY - window.innerHeight/2) / 70;
             scene.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         });
 
@@ -249,12 +331,10 @@
             codesCard.classList.toggle('is-flipped');
         });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
         }, { threshold: 0.1 });
-        document.querySelectorAll('[data-scroll]').forEach(el => observer.observe(el));
+        document.querySelectorAll('[data-scroll]').forEach(el => obs.observe(el));
     </script>
 </body>
 </html>
