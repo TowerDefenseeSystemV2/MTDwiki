@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTD Wiki | Database</title>
+    <title>MTD Wiki</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -14,7 +14,6 @@
             --border: rgba(255, 255, 255, 0.08);
             --active: #00ff88;
             --expired: #ff4444;
-            --special: #00d9ff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
@@ -59,14 +58,15 @@
             border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 50%;
             pointer-events: none;
-            transform: translate(-50%, -50%);
             z-index: 9999;
+            width: 0; height: 0;
+            transform: translate(-50%, -50%);
             animation: shockwave 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
         }
 
         @keyframes shockwave {
             0% { width: 0; height: 0; opacity: 1; border-width: 2px; }
-            100% { width: 150px; height: 150px; opacity: 0; border-width: 0px; }
+            100% { width: 120px; height: 120px; opacity: 0; border-width: 0px; }
         }
 
         nav { position: fixed; width: 100%; padding: 40px 60px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
@@ -102,7 +102,7 @@
             transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .game-card-main:hover { transform: scale(1.02) rotate(-1deg); border-color: rgba(255,255,255,0.4); }
+        .game-card-main img { width: 100%; height: 100%; object-fit: cover; }
 
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 
@@ -122,6 +122,7 @@
             position: absolute;
             inset: 0;
             backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
             border-radius: 24px;
             border: 1px solid var(--border);
             padding: 40px;
@@ -138,9 +139,11 @@
             transform: rotateY(180deg);
             justify-content: flex-start;
             padding: 25px;
-            background: rgba(10, 10, 15, 0.95);
+            background: rgba(10, 10, 15, 0.98);
             overflow-y: auto;
         }
+
+        .cat-icon { width: 60px; height: 60px; margin-bottom: auto; object-fit: contain; transform: translateZ(20px); }
 
         .codes-list { width: 100%; font-family: 'JetBrains Mono', monospace; }
         .code-item {
@@ -164,7 +167,6 @@
         }
         .badge.active { background: rgba(0, 255, 136, 0.1); color: var(--active); }
         .badge.expired { background: rgba(255, 68, 68, 0.1); color: var(--expired); }
-        .badge.yt { background: rgba(0, 217, 255, 0.1); color: var(--special); }
 
         .card h2 { font-size: 28px; font-weight: 800; margin-bottom: 10px; transform: translateZ(50px); }
         .card p { font-size: 14px; color: #777; transform: translateZ(30px); }
@@ -174,6 +176,8 @@
 
         .card-back::-webkit-scrollbar { width: 4px; }
         .card-back::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        @media (max-width: 1200px) { .grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
@@ -192,7 +196,7 @@
                 <h1 style="color: transparent; -webkit-text-stroke: 1.5px #fff;">Tower Defense</h1>
             </div>
             <div class="game-card-main" data-scroll>
-                <img src="https://tr.rbxcdn.com/180DAY-1025a1f6496929944061d47910940381/768/432/Image/Webp" alt="MTD" style="width:100%; height:100%; object-fit:cover;">
+                <img src="https://tr.rbxcdn.com/180DAY-1025a1f6496929944061d47910940381/768/432/Image/Webp" alt="MTD">
             </div>
         </div>
 
@@ -201,8 +205,9 @@
                 <a href="towers.html" style="text-decoration: none; color: inherit;">
                     <div class="card" data-3d>
                         <div class="card-front">
+                            <img src="images/towers.png" class="cat-icon" alt="">
                             <h2>Towers</h2>
-                            <p>Full unit database, damage tables, and evolution paths.</p>
+                            <p>Full unit database and stats.</p>
                         </div>
                     </div>
                 </a>
@@ -211,8 +216,9 @@
             <div class="card-container" data-scroll>
                 <div class="card" data-3d>
                     <div class="card-front">
+                        <img src="images/modes.png" class="cat-icon" alt="">
                         <h2>Modes</h2>
-                        <p>Strategies for Nightmare, Infinite, and Event dimensions.</p>
+                        <p>Info about events and default modes.</p>
                     </div>
                 </div>
             </div>
@@ -220,8 +226,9 @@
             <div class="card-container" data-scroll>
                 <div class="card" data-3d>
                     <div class="card-front">
+                        <img src="images/features.png" class="cat-icon" alt="">
                         <h2>Features</h2>
-                        <p>Trading rules, guild systems, and core mechanics.</p>
+                        <p>Core game mechanics.</p>
                     </div>
                 </div>
             </div>
@@ -229,12 +236,13 @@
             <div class="card-container" data-scroll>
                 <div class="card" id="codes-card">
                     <div class="card-front">
+                        <img src="images/codes.png" class="cat-icon" alt="">
                         <h2>Codes</h2>
-                        <p>Click to access the central reward database.</p>
+                        <p>Click to see all the codes.</p>
                     </div>
                     <div class="card-back">
                         <div class="codes-list">
-                            <h3 style="font-size: 12px; margin-bottom: 15px; color: #555;">// DATABASE_REWARDS</h3>
+                            <h3 style="font-size: 11px; margin-bottom: 15px; color: #444; letter-spacing: 2px;">// SYSTEM_REWARDS</h3>
                             
                             <div class="code-item">
                                 <span class="code-name">ULTRAKILL</span>
@@ -249,21 +257,15 @@
                             </div>
 
                             <div class="code-item">
-                                <span class="code-name">CC_CODE_5</span>
-                                <span class="code-reward">V1, V2, Minos</span>
-                                <span class="badge yt">YouTuber</span>
-                            </div>
-
-                            <div class="code-item">
                                 <span class="code-name">10K_DISCORD</span>
                                 <span class="code-reward">10k <img src="images/cash.png" class="reward-icon"></span>
-                                <span class="badge active">Group</span>
+                                <span class="badge active">Active</span>
                             </div>
 
                             <div class="code-item">
                                 <span class="code-name">FIRST_GROUP</span>
                                 <span class="code-reward">4500 <img src="images/cash.png" class="reward-icon"></span>
-                                <span class="badge active">Group</span>
+                                <span class="badge active">Active</span>
                             </div>
 
                             <div class="code-item">
@@ -284,12 +286,11 @@
                                 <span class="badge active">Active</span>
                             </div>
 
-                            <div class="code-item" style="opacity: 0.5;">
+                            <div class="code-item" style="opacity: 0.4;">
                                 <span class="code-name">KI_KI_MA_MA</span>
                                 <span class="code-reward">Jason Unit</span>
                                 <span class="badge expired">Expired</span>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -301,7 +302,8 @@
         document.addEventListener('click', e => {
             const ripple = document.createElement('div');
             ripple.className = 'click-effect';
-            ripple.style.left = `${e.clientX}px`; ripple.style.top = `${e.clientY}px`;
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
             document.body.appendChild(ripple);
             setTimeout(() => ripple.remove(), 500);
         });
