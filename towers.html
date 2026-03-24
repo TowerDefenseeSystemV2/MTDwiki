@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTD Wiki | Towers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
+        :root {
+            --bg: #020202;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            
+            /* Цвета редкостей */
+            --rarity-common: #b1b1b1;
+            --rarity-uncommon: #55ff55;
+            --rarity-rare: #5555ff;
+            --rarity-epic: #aa00ff;
+            --rarity-legendary: #ffaa00;
+            --rarity-mythic: #ff0044;
+            --rarity-exotic: #00ffff;
+            --rarity-secret: #ffffff;
+            --rarity-hero: #ffcc00;
+            --rarity-divine: #ff00ff;
+            --rarity-exclusive: #00ffcc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-wrapper {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 0%, rgba(30, 30, 50, 1) 0%, rgba(2, 2, 2, 1) 100%);
+        }
+
+        nav { padding: 40px 60px; display: flex; align-items: center; justify-content: space-between; }
+        .back-btn { color: #888; text-decoration: none; font-size: 13px; letter-spacing: 1px; transition: 0.3s; }
+        .back-btn:hover { color: #fff; transform: translateX(-5px); }
+
+        main { padding: 0 60px 100px; max-width: 1600px; margin: 0 auto; }
+
+        h1 { font-size: 60px; font-weight: 800; letter-spacing: -2px; margin-bottom: 40px; text-transform: uppercase; }
+
+        /* ТАБЫ РЕДКОСТЕЙ */
+        .rarity-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            color: #666;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .tab-btn:hover { border-color: #fff; color: #fff; }
+        .tab-btn.active { background: #fff; color: #000; border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+        /* СЕТКА БАШЕН */
+        .towers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .tower-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            display: none; /* Скрыты по умолчанию */
+        }
+
+        .tower-card.visible { display: block; animation: fadeIn 0.5s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tower-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-10px); }
+
+        .tower-header { display: flex; gap: 20px; margin-bottom: 20px; }
+        .tower-img {
+            width: 100px;
+            height: 100px;
+            background: #000;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            object-fit: cover;
+        }
+
+        .tower-info h2 { font-size: 22px; margin-bottom: 5px; }
+        .rarity-badge {
+            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        /* ДИНАМИЧЕСКИЕ СТАТЫ */
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .stat-item { font-family: 'JetBrains Mono', monospace; }
+        .stat-label { font-size: 9px; color: #555; text-transform: uppercase; display: block; }
+        .stat-value { font-size: 13px; color: #ccc; }
+
+        /* Цвета редкостей в бейджах */
+        .rarity-Common { color: var(--rarity-common); border: 1px solid var(--rarity-common); }
+        .rarity-Uncommon { color: var(--rarity-uncommon); border: 1px solid var(--rarity-uncommon); }
+        .rarity-Rare { color: var(--rarity-rare); border: 1px solid var(--rarity-rare); }
+        .rarity-Epic { color: var(--rarity-epic); border: 1px solid var(--rarity-epic); }
+        .rarity-Legendary { color: var(--rarity-legendary); border: 1px solid var(--rarity-legendary); }
+        .rarity-Mythic { color: var(--rarity-mythic); border: 1px solid var(--rarity-mythic); }
+        .rarity-Exotic { color: var(--rarity-exotic); border: 1px solid var(--rarity-exotic); }
+        .rarity-Secret { color: var(--rarity-secret); border: 1px solid var(--rarity-secret); }
+        .rarity-Hero { color: var(--rarity-hero); border: 1px solid var(--rarity-hero); }
+        .rarity-Divine { color: var(--rarity-divine); border: 1px solid var(--rarity-divine); }
+        .rarity-Exclusive { color: var(--rarity-exclusive); border: 1px solid var(--rarity-exclusive); }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-wrapper"></div>
+
+    <nav>
+        <a href="index.html" class="back-btn">← RETURN TO HUB</a>
+    </nav>
+
+    <main>
+        <h1>Towers Database</h1>
+
+        <div class="rarity-tabs" id="tab-container">
+            <button class="tab-btn active" onclick="filterRarity('All')">All</button>
+            <button class="tab-btn" onclick="filterRarity('Common')">Common</button>
+            <button class="tab-btn" onclick="filterRarity('Uncommon')">Uncommon</button>
+            <button class="tab-btn" onclick="filterRarity('Rare')">Rare</button>
+            <button class="tab-btn" onclick="filterRarity('Epic')">Epic</button>
+            <button class="tab-btn" onclick="filterRarity('Legendary')">Legendary</button>
+            <button class="tab-btn" onclick="filterRarity('Mythic')">Mythic</button>
+            <button class="tab-btn" onclick="filterRarity('Exotic')">Exotic</button>
+            <button class="tab-btn" onclick="filterRarity('Secret')">Secret</button>
+            <button class="tab-btn" onclick="filterRarity('Hero')">Hero</button>
+            <button class="tab-btn" onclick="filterRarity('Divine')">Divine</button>
+            <button class="tab-btn" onclick="filterRarity('Exclusive')">Exclusive</button>
+        </div>
+
+        <div class="towers-grid" id="towers-grid">
+            <div class="tower-card visible" data-rarity="Legendary">
+                <div class="tower-header">
+                    <img src="images/units/pumpkin_knight.png" class="tower-img" alt="">
+                    <div class="tower-info">
+                        <span class="rarity-badge rarity-Legendary">Legendary</span>
+                        <h2>Pumpkin Knight</h2>
+                    </div>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">Damage</span>
+                        <span class="stat-value">450</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Range</span>
+                        <span class="stat-value">18</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Cooldown</span>
+                        <span class="stat-value">1.5s</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Splash</span>
+                        <span class="stat-value">8.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tower-card visible" data-rarity="Mythic">
+                <div class="tower-header">
+                    <img src="images/units/v1.png" class="tower-img" alt="">
+                    <div class="tower-info">
+                        <span class="rarity-badge rarity-Mythic">Mythic</span>
+                        <h2>V1 Unit</h2>
+                    </div>
+                </div>
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">Damage</span>
+                        <span class="stat-value">1,200</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Range</span>
+                        <span class="stat-value">35</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Cooldown</span>
+                        <span class="stat-value">0.2s</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Type</span>
+                        <span class="stat-value">Single</span>
+                    </div>
+                </div>
+            </div>
+            
+            </div>
+    </main>
+
+    <script>
+        function filterRarity(rarity) {
+            // Обновляем кнопки
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText === rarity) btn.classList.add('active');
+            });
+
+            // Фильтруем карточки
+            const cards = document.querySelectorAll('.tower-card');
+            cards.forEach(card => {
+                if (rarity === 'All' || card.getAttribute('data-rarity') === rarity) {
+                    card.classList.add('visible');
+                } else {
+                    card.classList.remove('visible');
+                }
+            });
+        }
+
+        // Инициализация (показываем все при загрузке)
+        filterRarity('All');
+    </script>
+</body>
+</html>
